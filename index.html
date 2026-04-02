@@ -1,73 +1,210 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Cool Site</title>
+<title>yeah</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #0f0f0f, #1a1a2e);
-            color: white;
-            text-align: center;
-        }
+<style>
+body {
+    margin: 0;
+    background: black;
+    color: white;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
 
-        header {
-            padding: 50px 20px;
-        }
+/* main text */
+.text {
+    font-size: 5em;
+    position: relative;
+    transition: transform 0.1s linear;
+}
 
-        h1 {
-            font-size: 3em;
-        }
+/* bubbles */
+.bubble {
+    position: absolute;
+    bottom: -50px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    animation: rise linear forwards;
+}
+@keyframes rise {
+    to { transform: translateY(-110vh); opacity: 0; }
+}
 
-        p {
-            opacity: 0.8;
-        }
+/* particles */
+.particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    animation: explode 1s forwards;
+}
+@keyframes explode {
+    to {
+        transform: translate(var(--x), var(--y));
+        opacity: 0;
+    }
+}
 
-        .btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 25px;
-            background: #6c5ce7;
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            transition: 0.3s;
-        }
+/* shake */
+.shake {
+    animation: shake 0.15s infinite;
+}
+@keyframes shake {
+    0% { transform: translate(2px,2px); }
+    25% { transform: translate(-2px,2px); }
+    50% { transform: translate(2px,-2px); }
+    75% { transform: translate(-2px,-2px); }
+}
 
-        .btn:hover {
-            background: #4834d4;
-        }
+/* pulse background */
+.pulse {
+    animation: pulse 0.8s infinite;
+}
+@keyframes pulse {
+    0% { background: black; }
+    50% { background: #111; }
+    100% { background: black; }
+}
 
-        .card {
-            background: rgba(255,255,255,0.05);
-            margin: 20px auto;
-            padding: 20px;
-            width: 300px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-    </style>
+/* glitch clones */
+.clone {
+    position: absolute;
+    opacity: 0.25;
+    pointer-events: none;
+    font-size: 5em;
+}
+</style>
+
 </head>
 <body>
 
-<header>
-    <h1>🚀 My Website</h1>
-    <p>This is my free domain site 😎</p>
-    <a href="#" class="btn">Click Me</a>
-</header>
+<div class="text" id="text">yeah</div>
 
-<div class="card">
-    <h2>🔥 Project</h2>
-    <p>Put your game or project here</p>
-</div>
+<script>
+const text = document.getElementById("text");
 
-<div class="card">
-    <h2>📬 Contact</h2>
-    <p>Add your socials here</p>
-</div>
+let t = 0;
+let scale = 1;
+let rot = 0;
+let opacity = 1;
+
+// words
+const words = ["yeah","ok","sure","lol","nah","what","real","???"];
+
+// MAIN LOOP
+function loop() {
+    t += 0.01;
+
+    // slow → insane scaling
+    scale += 0.0008;
+    rot += 0.03;
+    opacity -= 0.0002;
+
+    text.style.transform = `scale(${scale}) rotate(${rot}deg)`;
+    text.style.opacity = Math.max(opacity, 0.4);
+
+    // STAGES
+    if (t > 1) spawnBubbles();
+    if (t > 2) rainbowText();
+    if (t > 3) shakeScreen();
+    if (t > 4) pulseBG();
+    if (t > 5) blurScreen();
+    if (t > 6) explode();
+    if (t > 7) glitch();
+    if (t > 10) nuclearMode();
+
+    requestAnimationFrame(loop);
+}
+loop();
+
+// click changes word
+text.onclick = () => {
+    text.innerText = words[Math.floor(Math.random()*words.length)];
+};
+
+// 🌈 rainbow
+function rainbowText() {
+    text.style.color = `hsl(${Math.random()*360},100%,70%)`;
+}
+
+// 🫧 bubbles
+function spawnBubbles() {
+    if (Math.random() > 0.08) return;
+
+    const b = document.createElement("div");
+    b.className = "bubble";
+
+    let size = Math.random()*50 + 10;
+    b.style.width = size+"px";
+    b.style.height = size+"px";
+
+    b.style.left = Math.random()*window.innerWidth+"px";
+    b.style.animationDuration = (Math.random()*5+3)+"s";
+
+    document.body.appendChild(b);
+    setTimeout(()=>b.remove(),9000);
+}
+
+// 💥 shake
+function shakeScreen() {
+    document.body.classList.add("shake");
+}
+
+// ⚡ pulse
+function pulseBG() {
+    document.body.classList.add("pulse");
+}
+
+// 🌫 blur
+function blurScreen() {
+    document.body.style.filter = "blur(1.5px)";
+}
+
+// 💥 explosion particles
+function explode() {
+    if (Math.random() > 0.15) return;
+
+    for (let i=0;i<3;i++){
+        const p = document.createElement("div");
+        p.className = "particle";
+
+        p.style.left = window.innerWidth/2 + "px";
+        p.style.top = window.innerHeight/2 + "px";
+
+        p.style.setProperty("--x",(Math.random()*300-150)+"px");
+        p.style.setProperty("--y",(Math.random()*300-150)+"px");
+
+        document.body.appendChild(p);
+        setTimeout(()=>p.remove(),1000);
+    }
+}
+
+// 👁 glitch clones
+function glitch() {
+    if (Math.random() > 0.2) return;
+
+    const c = document.createElement("div");
+    c.className = "clone";
+    c.innerText = text.innerText;
+
+    c.style.left = (window.innerWidth/2 + Math.random()*40-20) + "px";
+    c.style.top = (window.innerHeight/2 + Math.random()*40-20) + "px";
+
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),400);
+}
+
+// ☢️ final chaos mode
+function nuclearMode() {
+    document.body.style.filter = "contrast(2) saturate(3) blur(2px)";
+}
+</script>
 
 </body>
 </html>
